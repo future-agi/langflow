@@ -59,6 +59,12 @@ def _get_traceloop_tracer():
     return TraceloopTracer
 
 
+def _get_futureagi_tracer():
+    from langflow.services.tracing.futureagi import FutureAGITracer
+
+    return FutureAGITracer
+
+
 def _get_native_tracer():
     from langflow.services.tracing.native import NativeTracer
 
@@ -241,6 +247,19 @@ class TracingService(Service):
             session_id=trace_context.session_id,
         )
 
+    def _initialize_futureagi_tracer(self, trace_context: TraceContext) -> None:
+        if self.deactivated:
+            return
+        futureagi_tracer = _get_futureagi_tracer()
+        trace_context.tracers["futureagi"] = futureagi_tracer(
+            trace_name=trace_context.run_name,
+            trace_type="chain",
+            project_name=trace_context.project_name,
+            trace_id=trace_context.run_id,
+            user_id=trace_context.user_id,
+            session_id=trace_context.session_id,
+        )
+
     def _initialize_native_tracer(self, trace_context: TraceContext) -> None:
         if self.deactivated:
             return
@@ -316,6 +335,7 @@ class TracingService(Service):
             self._initialize_arize_phoenix_tracer,
             self._initialize_opik_tracer,
             self._initialize_traceloop_tracer,
+            self._initialize_futureagi_tracer,
             self._initialize_native_tracer,
             self._initialize_openlayer_tracer,
         ):
