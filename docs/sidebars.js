@@ -188,6 +188,7 @@ module.exports = {
               label: "LLM tracing",
               items: [
                 "Develop/integrations-arize",
+                "Develop/integrations-futureagi",
                 "Develop/integrations-langfuse",
                 "Develop/integrations-langsmith",
                 "Develop/integrations-langwatch",

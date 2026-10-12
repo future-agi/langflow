@@ -1,0 +1,66 @@
+---
+title: Future AGI
+slug: /integrations-futureagi
+---
+
+[Future AGI](https://futureagi.com) is a platform for evaluating, observing, and improving AI applications.
+
+You can configure Langflow to send [tracing](https://docs.futureagi.com/docs/tracing/concepts) data about your flow executions to a Future AGI Observe project over OpenTelemetry (OTLP/HTTP).
+
+Each flow run becomes one trace. The trace has a root span for the run, with a child span for each component. LLM and tool calls made by a component, such as an **Agent** or a **Language Model** component, are nested under that component's span with their model name and token counts.
+
+## Prerequisites
+
+- A [Future AGI account](https://app.futureagi.com), or a self-hosted Future AGI deployment
+- A Future AGI API key and secret key
+- A [running Langflow server](/get-started-installation) with a [flow](/concepts-flows) that you want to trace
+
+:::tip
+If you need a flow to test the Future AGI integration, see the [Langflow quickstart](/get-started-quickstart).
+:::
+
+## Integrate Future AGI with Langflow
+
+1. Get your API key and secret key from the **Keys** page of your Future AGI dashboard.
+
+2. In the same environment where you run Langflow, set the following environment variables:
+
+    ```bash
+    export FI_API_KEY=FUTURE_AGI_API_KEY
+    export FI_SECRET_KEY=FUTURE_AGI_SECRET_KEY
+    export FI_PROJECT_NAME=FUTURE_AGI_PROJECT_NAME
+    ```
+
+    Replace the placeholders with your API key, your secret key, and the name of the Future AGI Observe project that receives the traces. The project is created when the first trace arrives.
+
+    All three variables are required. If any of them is missing, the integration stays inactive.
+
+3. Optional: For a self-hosted Future AGI deployment, set `FI_BASE_URL` to its collector URL. The default is `https://api.futureagi.com`. Langflow sends traces to `FI_BASE_URL` followed by `/tracer/v1/traces`.
+
+    ```bash
+    export FI_BASE_URL=https://futureagi.example.com
+    ```
+
+4. Optional: To keep inputs and outputs out of the traces, set `FI_REDACT` to `true`. Span names, timings, statuses, model names, and token counts are still sent.
+
+    ```bash
+    export FI_REDACT=true
+    ```
+
+5. Start Langflow in the same terminal or environment where you set the environment variables:
+
+    ```bash
+    uv run langflow run
+    ```
+
+6. In Langflow, run a flow to produce activity for Future AGI to trace.
+
+7. In Future AGI, open the **Observe** project named in `FI_PROJECT_NAME` to view the traces.
+
+    The flow's session ID is recorded as the trace's session, and the Langflow user ID as its user.
+
+All flows on the Langflow server send traces to the same Future AGI project.
+
+## Disable the Future AGI integration
+
+To disable the Future AGI integration, remove the `FI_API_KEY`, `FI_SECRET_KEY`, and `FI_PROJECT_NAME` environment variables, and then restart Langflow.
