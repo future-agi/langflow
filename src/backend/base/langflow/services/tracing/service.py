@@ -258,6 +258,8 @@ class TracingService(Service):
             trace_id=trace_context.run_id,
             user_id=trace_context.user_id,
             session_id=trace_context.session_id,
+            flow_id=trace_context.flow_id,
+            tracing_user_id=trace_context.tracing_user_id,
         )
 
     def _initialize_native_tracer(self, trace_context: TraceContext) -> None:
