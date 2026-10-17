@@ -152,6 +152,10 @@ def mock_tracers():
             return_value=MockTracer,
         ),
         patch(
+            "langflow.services.tracing.service._get_futureagi_tracer",
+            return_value=MockTracer,
+        ),
+        patch(
             "langflow.services.tracing.service._get_native_tracer",
             return_value=MockTracer,
         ),
@@ -191,6 +195,7 @@ async def test_start_end_tracers(tracing_service):
     assert "arize_phoenix" in trace_context.tracers
     assert "opik" in trace_context.tracers
     assert "traceloop" in trace_context.tracers
+    assert "futureagi" in trace_context.tracers
     assert "native" in trace_context.tracers
     assert "openlayer" in trace_context.tracers
 
@@ -227,6 +232,7 @@ async def test_start_tracers_continues_after_one_initializer_fails(tracing_servi
         "langfuse",
         "opik",
         "traceloop",
+        "futureagi",
         "native",
         "openlayer",
     }
